@@ -11,5 +11,4 @@ public interface UrlCurtaRepository {
     Optional<UrlCurta> findByCodigo(String codigo);
 
     boolean existsByCodigo(String codigo);
-
 }

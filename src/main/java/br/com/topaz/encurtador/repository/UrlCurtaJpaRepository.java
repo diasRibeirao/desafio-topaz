@@ -9,16 +9,20 @@ import java.util.List;
 import java.util.Optional;
 
 @ApplicationScoped
-public class UrlCurtaJpaRepository implements UrlCurtaRepository {
+public class UrlCurtaJpaRepository
+        implements UrlCurtaRepository {
 
     @PersistenceContext(unitName = "urlEncurtadorPU")
     private EntityManager entityManager;
 
+    @Override
     public void save(UrlCurta urlCurta) {
         entityManager.persist(urlCurta);
     }
 
+    @Override
     public Optional<UrlCurta> findByCodigo(String codigo) {
+
         List<UrlCurta> resultado =
                 entityManager
                         .createQuery(
@@ -38,7 +42,9 @@ public class UrlCurtaJpaRepository implements UrlCurtaRepository {
         return Optional.of(resultado.get(0));
     }
 
+    @Override
     public boolean existsByCodigo(String codigo) {
+
         Long quantidade =
                 entityManager
                         .createQuery(
