@@ -5,12 +5,11 @@ import br.com.topaz.encurtador.exception.AliasJaExisteException;
 import br.com.topaz.encurtador.exception.ValidacaoException;
 import br.com.topaz.encurtador.repository.UrlCurtaRepository;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Optional;
 
 @ApplicationScoped
@@ -40,8 +39,10 @@ public class UrlCurtaService {
      * @return URL curta criada
      */
     @Transactional
-    public synchronized UrlCurta criar(String urlOriginal, String alias) {
-        
+    public synchronized UrlCurta criar(
+            String urlOriginal,
+            String alias) {
+
         validarUrl(urlOriginal);
 
         String codigo;
@@ -72,7 +73,7 @@ public class UrlCurtaService {
         return urlCurta;
     }
 
-    public Optional<UrlCurta> findByCodigo(String codigo) {
+    public Optional<UrlCurta> buscarPorCodigo(String codigo) {
         return repository.findByCodigo(codigo);
     }
 

@@ -13,7 +13,8 @@ public class GeradorCodigoCurto {
 
     private static final int DEFAULT_LENGTH = 7;
 
-    private final SecureRandom random = new SecureRandom();
+    private final SecureRandom random =
+            new SecureRandom();
 
     public String gerar() {
         return gerar(DEFAULT_LENGTH);
@@ -27,16 +28,21 @@ public class GeradorCodigoCurto {
             );
         }
 
-        StringBuilder code = new StringBuilder(length);
+        StringBuilder code =
+                new StringBuilder(length);
 
         for (int i = 0; i < length; i++) {
 
-            int index = random.nextInt(CHARACTERS.length());
+            int index =
+                    random.nextInt(
+                            CHARACTERS.length()
+                    );
 
-            code.append(CHARACTERS.charAt(index));
+            code.append(
+                    CHARACTERS.charAt(index)
+            );
         }
 
         return code.toString();
     }
-
 }
