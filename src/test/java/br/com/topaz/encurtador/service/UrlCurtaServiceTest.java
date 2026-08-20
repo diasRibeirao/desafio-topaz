@@ -8,6 +8,14 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import static org.junit.Assert.*;
 
@@ -179,6 +187,61 @@ public class UrlCurtaServiceTest {
         assertEquals(
                 "meu_link",
                 resultado.getCodigo()
+        );
+    }
+
+    @Test
+    public void deveProcessarCriacoesConcorrentesSemPerderUrls()
+            throws Exception {
+
+        final int quantidade = 20;
+
+        ExecutorService executor =
+                Executors.newFixedThreadPool(10);
+
+        List<Future<UrlCurta>> resultados =
+                new ArrayList<Future<UrlCurta>>();
+
+        for (int i = 0; i < quantidade; i++) {
+
+            final int indice = i;
+
+            resultados.add(
+                    executor.submit(
+                            new Callable<UrlCurta>() {
+                                @Override
+                                public UrlCurta call() {
+
+                                    return service.criar(
+                                            "https://exemplo.com/" + indice,
+                                            null
+                                    );
+                                }
+                            }
+                    )
+            );
+        }
+
+        Set<String> codigos =
+                new HashSet<String>();
+
+        for (Future<UrlCurta> resultado : resultados) {
+
+            UrlCurta urlCurta = resultado.get();
+
+            assertNotNull(urlCurta);
+            assertNotNull(urlCurta.getCodigo());
+
+            codigos.add(
+                    urlCurta.getCodigo()
+            );
+        }
+
+        executor.shutdown();
+
+        assertEquals(
+                quantidade,
+                codigos.size()
         );
     }
 

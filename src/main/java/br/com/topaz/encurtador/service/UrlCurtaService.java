@@ -21,8 +21,21 @@ public class UrlCurtaService {
     @Inject
     private GeradorCodigoCurto gerador;
 
-    public UrlCurta criar(String urlOriginal, String alias) {
-
+    /**
+     * Cria uma URL encurtada a partir da URL original e de um alias opcional.
+     *
+     * <p>O método é sincronizado para garantir que apenas uma solicitação
+     * de criação seja processada por vez, conforme regra do motor de geração.
+     * A sincronização fica na camada de serviço por se tratar de uma regra
+     * de negócio/processamento, e não de responsabilidade do Resource ou
+     * do Repository.</p>
+     *
+     * @param urlOriginal URL original que será encurtada
+     * @param alias alias personalizado opcional
+     * @return URL curta criada
+     */
+    public synchronized UrlCurta criar(String urlOriginal, String alias) {
+        
         validarUrl(urlOriginal);
 
         String codigo;
@@ -43,7 +56,10 @@ public class UrlCurtaService {
         }
 
         UrlCurta urlCurta =
-                new UrlCurta(codigo, urlOriginal.trim());
+                new UrlCurta(
+                        codigo,
+                        urlOriginal.trim()
+                );
 
         repository.save(urlCurta);
 
