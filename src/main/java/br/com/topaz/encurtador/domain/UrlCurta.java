@@ -1,15 +1,8 @@
 package br.com.topaz.encurtador.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-
 
 @Entity
 @Table(
@@ -44,10 +37,10 @@ public class UrlCurta implements Serializable {
     private String urlOriginal;
 
     @Column(
-            name = "data",
+            name = "criado_em",
             nullable = false
     )
-    private LocalDateTime data;
+    private LocalDateTime criadoEm;
 
     public UrlCurta() {
     }
@@ -55,15 +48,11 @@ public class UrlCurta implements Serializable {
     public UrlCurta(String codigo, String urlOriginal) {
         this.codigo = codigo;
         this.urlOriginal = urlOriginal;
-        this.data = LocalDateTime.now();
+        this.criadoEm = LocalDateTime.now();
     }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getCodigo() {
@@ -82,11 +71,11 @@ public class UrlCurta implements Serializable {
         this.urlOriginal = urlOriginal;
     }
 
-    public LocalDateTime getData() {
-        return data;
+    public LocalDateTime getCriadoEm() {
+        return criadoEm;
     }
 
-    public void setData(LocalDateTime data) {
-        this.data = data;
+    public void setCriadoEm(LocalDateTime criadoEm) {
+        this.criadoEm = criadoEm;
     }
 }
