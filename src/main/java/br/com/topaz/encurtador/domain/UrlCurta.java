@@ -1,15 +1,52 @@
 package br.com.topaz.encurtador.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+
+@Entity
+@Table(
+        name = "url_curta",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_url_curta_codigo",
+                        columnNames = "codigo"
+                )
+        }
+)
 public class UrlCurta implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(
+            name = "codigo",
+            nullable = false,
+            length = 30
+    )
     private String codigo;
+
+    @Column(
+            name = "url_original",
+            nullable = false,
+            length = 2048
+    )
     private String urlOriginal;
+
+    @Column(
+            name = "data",
+            nullable = false
+    )
     private LocalDateTime data;
 
     public UrlCurta() {
