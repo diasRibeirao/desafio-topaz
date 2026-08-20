@@ -2,6 +2,8 @@ package br.com.topaz.encurtador.exception;
 
 import br.com.topaz.encurtador.dto.ErroResponse;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
@@ -11,14 +13,20 @@ import javax.ws.rs.ext.Provider;
 public class AliasJaExisteExceptionMapper
         implements ExceptionMapper<AliasJaExisteException> {
 
-    @Override
-    public Response toResponse(AliasJaExisteException exception) {
+    @Context
+    private HttpServletRequest request;
 
-        ErroResponse erro = new ErroResponse(
-                409,
-                "Conflict",
-                exception.getMessage()
-        );
+    @Override
+    public Response toResponse(
+            AliasJaExisteException exception) {
+
+        ErroResponse erro =
+                new ErroResponse(
+                        409,
+                        "Conflict",
+                        exception.getMessage(),
+                        request.getRequestURI()
+                );
 
         return Response
                 .status(Response.Status.CONFLICT)
