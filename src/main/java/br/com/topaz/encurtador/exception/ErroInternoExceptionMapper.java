@@ -10,26 +10,27 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 @Provider
-public class ValidacaoExceptionMapper
-        implements ExceptionMapper<ValidacaoException> {
+public class ErroInternoExceptionMapper
+        implements ExceptionMapper<Exception> {
 
     @Context
     private HttpServletRequest request;
 
     @Override
-    public Response toResponse(
-            ValidacaoException exception) {
+    public Response toResponse(Exception exception) {
 
         ErroResponse erro =
                 new ErroResponse(
-                        400,
-                        "Bad Request",
-                        exception.getMessage(),
+                        500,
+                        "Internal Server Error",
+                        "Ocorreu um erro inesperado.",
                         request.getRequestURI()
                 );
 
         return Response
-                .status(Response.Status.BAD_REQUEST)
+                .status(
+                        Response.Status.INTERNAL_SERVER_ERROR
+                )
                 .type(MediaType.APPLICATION_JSON)
                 .entity(erro)
                 .build();
