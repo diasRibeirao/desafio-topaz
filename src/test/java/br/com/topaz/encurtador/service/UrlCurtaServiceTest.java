@@ -3,7 +3,7 @@ package br.com.topaz.encurtador.service;
 import br.com.topaz.encurtador.domain.UrlCurta;
 import br.com.topaz.encurtador.exception.AliasJaExisteException;
 import br.com.topaz.encurtador.exception.ValidacaoException;
-import br.com.topaz.encurtador.repository.UrlCurtaRepository;
+import br.com.topaz.encurtador.repository.UrlCurtaJpaRepository;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -22,14 +22,14 @@ import static org.junit.Assert.*;
 public class UrlCurtaServiceTest {
 
     private UrlCurtaService service;
-    private UrlCurtaRepository repository;
+    private UrlCurtaJpaRepository repository;
     private GeradorCodigoCurto gerador;
 
     @Before
     public void setUp() throws Exception {
 
         service = new UrlCurtaService();
-        repository = new UrlCurtaRepository();
+        repository = new UrlCurtaJpaRepository();
         gerador = new GeradorCodigoCurto();
 
         injetarDependencia(
