@@ -1,15 +1,15 @@
 package br.com.topaz.encurtador.service;
 
 import br.com.topaz.encurtador.domain.UrlCurta;
-import br.com.topaz.encurtador.repository.UrlCurtaRepository;
 import br.com.topaz.encurtador.exception.AliasJaExisteException;
 import br.com.topaz.encurtador.exception.ValidacaoException;
-
-import java.net.URI;
-import java.net.URISyntaxException;
+import br.com.topaz.encurtador.repository.UrlCurtaRepository;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Optional;
 
 @ApplicationScoped
@@ -27,15 +27,22 @@ public class UrlCurtaService {
      * <p>O método é sincronizado para garantir que apenas uma solicitação
      * de criação seja processada por vez, conforme regra do motor de geração.
      * A sincronização fica na camada de serviço por se tratar de uma regra
-     * de negócio/processamento, e não de responsabilidade do Resource ou
+     * de processamento, e não de responsabilidade do Resource ou
      * do Repository.</p>
+     *
+     * <p>A operação é transacional para garantir que a persistência da URL
+     * curta seja executada dentro de uma transação e que a operação seja
+     * revertida em caso de falha.</p>
      *
      * @param urlOriginal URL original que será encurtada
      * @param alias alias personalizado opcional
      * @return URL curta criada
      */
-    public synchronized UrlCurta criar(String urlOriginal, String alias) {
-        
+    @Transactional
+    public synchronized UrlCurta criar(
+            String urlOriginal,
+            String alias) {
+
         validarUrl(urlOriginal);
 
         String codigo;
@@ -44,7 +51,7 @@ public class UrlCurtaService {
 
             codigo = validarENormalizarAlias(alias);
 
-            if (repository.existsByCodido(codigo)) {
+            if (repository.existsByCodigo(codigo)) {
                 throw new AliasJaExisteException(codigo);
             }
 
@@ -52,7 +59,7 @@ public class UrlCurtaService {
 
             do {
                 codigo = gerador.gerar();
-            } while (repository.existsByCodido(codigo));
+            } while (repository.existsByCodigo(codigo));
         }
 
         UrlCurta urlCurta =
@@ -66,8 +73,8 @@ public class UrlCurtaService {
         return urlCurta;
     }
 
-    public Optional<UrlCurta> findByCodigo(String codigo) {
-        return repository.findByCodido(codigo);
+    public Optional<UrlCurta> buscarPorCodigo(String codigo) {
+        return repository.findByCodigo(codigo);
     }
 
     private void validarUrl(String url) {

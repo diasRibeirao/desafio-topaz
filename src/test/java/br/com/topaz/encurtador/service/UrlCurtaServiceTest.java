@@ -4,6 +4,7 @@ import br.com.topaz.encurtador.domain.UrlCurta;
 import br.com.topaz.encurtador.exception.AliasJaExisteException;
 import br.com.topaz.encurtador.exception.ValidacaoException;
 import br.com.topaz.encurtador.repository.UrlCurtaRepository;
+import br.com.topaz.encurtador.repository.UrlCurtaRepositoryEmMemoria;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -29,8 +30,10 @@ public class UrlCurtaServiceTest {
     public void setUp() throws Exception {
 
         service = new UrlCurtaService();
-        repository = new UrlCurtaRepository();
-        gerador = new GeradorCodigoCurto();
+        repository =
+                new UrlCurtaRepositoryEmMemoria();
+        gerador =
+                new GeradorCodigoCurto();
 
         injetarDependencia(
                 service,
@@ -55,6 +58,7 @@ public class UrlCurtaServiceTest {
                 );
 
         assertNotNull(resultado);
+
         assertEquals(
                 "google",
                 resultado.getCodigo()
@@ -77,6 +81,7 @@ public class UrlCurtaServiceTest {
 
         assertNotNull(resultado);
         assertNotNull(resultado.getCodigo());
+
         assertEquals(
                 7,
                 resultado.getCodigo().length()
@@ -86,19 +91,13 @@ public class UrlCurtaServiceTest {
     @Test(expected = ValidacaoException.class)
     public void deveRejeitarUrlNula() {
 
-        service.criar(
-                null,
-                null
-        );
+        service.criar(null, null);
     }
 
     @Test(expected = ValidacaoException.class)
     public void deveRejeitarUrlVazia() {
 
-        service.criar(
-                "",
-                null
-        );
+        service.criar("", null);
     }
 
     @Test(expected = ValidacaoException.class)
@@ -199,50 +198,59 @@ public class UrlCurtaServiceTest {
         ExecutorService executor =
                 Executors.newFixedThreadPool(10);
 
-        List<Future<UrlCurta>> resultados =
-                new ArrayList<Future<UrlCurta>>();
+        try {
 
-        for (int i = 0; i < quantidade; i++) {
+            List<Future<UrlCurta>> resultados =
+                    new ArrayList<Future<UrlCurta>>();
 
-            final int indice = i;
+            for (int i = 0; i < quantidade; i++) {
 
-            resultados.add(
-                    executor.submit(
-                            new Callable<UrlCurta>() {
-                                @Override
-                                public UrlCurta call() {
+                final int indice = i;
 
-                                    return service.criar(
-                                            "https://exemplo.com/" + indice,
-                                            null
-                                    );
+                resultados.add(
+                        executor.submit(
+                                new Callable<UrlCurta>() {
+
+                                    @Override
+                                    public UrlCurta call() {
+
+                                        return service.criar(
+                                                "https://exemplo.com/" + indice,
+                                                null
+                                        );
+                                    }
                                 }
-                            }
-                    )
+                        )
+                );
+            }
+
+            Set<String> codigos =
+                    new HashSet<String>();
+
+            for (Future<UrlCurta> resultado : resultados) {
+
+                UrlCurta urlCurta =
+                        resultado.get();
+
+                assertNotNull(urlCurta);
+                assertNotNull(
+                        urlCurta.getCodigo()
+                );
+
+                codigos.add(
+                        urlCurta.getCodigo()
+                );
+            }
+
+            assertEquals(
+                    quantidade,
+                    codigos.size()
             );
+
+        } finally {
+
+            executor.shutdown();
         }
-
-        Set<String> codigos =
-                new HashSet<String>();
-
-        for (Future<UrlCurta> resultado : resultados) {
-
-            UrlCurta urlCurta = resultado.get();
-
-            assertNotNull(urlCurta);
-            assertNotNull(urlCurta.getCodigo());
-
-            codigos.add(
-                    urlCurta.getCodigo()
-            );
-        }
-
-        executor.shutdown();
-
-        assertEquals(
-                quantidade,
-                codigos.size()
-        );
     }
 
     private void injetarDependencia(
