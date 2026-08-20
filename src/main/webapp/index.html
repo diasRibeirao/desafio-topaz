@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0">
+
+    <title>Encurtador de URL</title>
+
+    <link
+            rel="stylesheet"
+            href="style.css">
+</head>
+
+<body>
+
+<main class="container">
+
+    <section class="card">
+
+        <header class="header">
+
+            <h1>Encurtador de URL</h1>
+
+            <p>
+                Informe uma URL e gere um link curto
+                para compartilhar.
+            </p>
+
+        </header>
+
+        <form id="shorten-form">
+
+            <div class="form-group">
+
+                <label for="url">
+                    URL original
+                </label>
+
+                <input
+                        type="url"
+                        id="url"
+                        name="url"
+                        placeholder="https://exemplo.com/pagina"
+                        autocomplete="url"
+                        required>
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="alias">
+                    Alias personalizado
+                    <span class="optional">
+                        (opcional)
+                    </span>
+                </label>
+
+                <input
+                        type="text"
+                        id="alias"
+                        name="alias"
+                        placeholder="meu-link"
+                        minlength="3"
+                        maxlength="30"
+                        autocomplete="off">
+
+                <small>
+                    Use letras, números, hífen ou underline.
+                </small>
+
+            </div>
+
+            <button
+                    id="submit-btn"
+                    class="primary-button"
+                    type="submit">
+
+                Gerar link curto
+
+            </button>
+
+        </form>
+
+        <div
+                id="error"
+                class="message error hidden"
+                role="alert">
+        </div>
+
+        <section
+                id="result"
+                class="result hidden"
+                aria-live="polite">
+
+            <h2>
+                Link criado
+            </h2>
+
+            <div class="short-url-row">
+
+                <a
+                        id="short-url-link"
+                        href="#"
+                        target="_blank"
+                        rel="noopener noreferrer">
+                </a>
+
+                <button
+                        id="copy-btn"
+                        class="secondary-button"
+                        type="button">
+
+                    Copiar
+
+                </button>
+
+            </div>
+
+        </section>
+
+    </section>
+
+</main>
+
+<script src="app.js"></script>
+
+</body>
+
+</html>
