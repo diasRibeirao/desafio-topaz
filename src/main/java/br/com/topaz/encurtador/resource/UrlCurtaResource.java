@@ -31,7 +31,7 @@ public class UrlCurtaResource {
     public Response create(CriarUrlCurtaRequest input) {
 
         UrlCurta urlCurta =
-                service.create(
+                service.criar(
                         input.getUrl(),
                         input.getAlias()
                 );
