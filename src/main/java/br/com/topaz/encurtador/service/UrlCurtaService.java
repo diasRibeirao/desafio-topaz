@@ -2,6 +2,11 @@ package br.com.topaz.encurtador.service;
 
 import br.com.topaz.encurtador.domain.UrlCurta;
 import br.com.topaz.encurtador.repository.UrlCurtaRepository;
+import br.com.topaz.encurtador.exception.AliasJaExisteException;
+import br.com.topaz.encurtador.exception.ValidacaoException;
+
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -16,27 +21,91 @@ public class UrlCurtaService {
     @Inject
     private GeradorCodigoCurto gerador;
 
-    public UrlCurta create(String originalUrl, String alias) {
+    public UrlCurta criar(String urlOriginal, String alias) {
 
-        String code;
+        validarUrl(urlOriginal);
+
+        String codigo;
 
         if (alias != null && !alias.trim().isEmpty()) {
-            code = alias.trim();
+
+            codigo = validarENormalizarAlias(alias);
+
+            if (repository.existsByCodido(codigo)) {
+                throw new AliasJaExisteException(codigo);
+            }
+
         } else {
+
             do {
-                code = gerador.gerar();
-            } while (repository.existsByCodido(code));
+                codigo = gerador.gerar();
+            } while (repository.existsByCodido(codigo));
         }
 
         UrlCurta urlCurta =
-                new UrlCurta(code, originalUrl);
+                new UrlCurta(codigo, urlOriginal.trim());
 
         repository.save(urlCurta);
 
         return urlCurta;
     }
 
-    public Optional<UrlCurta> findByCode(String codido) {
-        return repository.findByCodido(codido);
+    public Optional<UrlCurta> findByCodigo(String codigo) {
+        return repository.findByCodido(codigo);
+    }
+
+    private void validarUrl(String url) {
+
+        if (url == null || url.trim().isEmpty()) {
+            throw new ValidacaoException(
+                    "A URL e obrigatoria."
+            );
+        }
+
+        try {
+
+            URI uri = new URI(url.trim());
+
+            String scheme = uri.getScheme();
+
+            if (scheme == null ||
+                    (!"http".equalsIgnoreCase(scheme)
+                            && !"https".equalsIgnoreCase(scheme))) {
+
+                throw new ValidacaoException(
+                        "A URL deve utilizar HTTP ou HTTPS."
+                );
+            }
+
+            if (uri.getHost() == null ||
+                    uri.getHost().trim().isEmpty()) {
+
+                throw new ValidacaoException(
+                        "Informe uma URL valida."
+                );
+            }
+
+        } catch (URISyntaxException e) {
+
+            throw new ValidacaoException(
+                    "Informe uma URL valida."
+            );
+        }
+    }
+
+    private String validarENormalizarAlias(String alias) {
+
+        String aliasNormalizado = alias.trim();
+
+        if (!aliasNormalizado.matches(
+                "^[A-Za-z0-9_-]{3,30}$")) {
+
+            throw new ValidacaoException(
+                    "O alias deve possuir entre 3 e 30 caracteres " +
+                            "e utilizar apenas letras, numeros, hifen ou underline."
+            );
+        }
+
+        return aliasNormalizado;
     }
 }
