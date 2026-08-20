@@ -12,6 +12,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -251,6 +252,34 @@ public class UrlCurtaServiceTest {
 
             executor.shutdown();
         }
+    }
+
+    @Test
+    public void deveBuscarUrlPorCodigo() {
+
+        service.criar(
+                "https://www.google.com",
+                "google"
+        );
+
+        Optional<UrlCurta> resultado =
+                service.buscarPorCodigo("google");
+
+        assertTrue(resultado.isPresent());
+
+        assertEquals(
+                "https://www.google.com",
+                resultado.get().getUrlOriginal()
+        );
+    }
+
+    @Test
+    public void deveRetornarVazioQuandoCodigoNaoExistir() {
+
+        Optional<UrlCurta> resultado =
+                service.buscarPorCodigo("nao-existe");
+
+        assertFalse(resultado.isPresent());
     }
 
     private void injetarDependencia(
