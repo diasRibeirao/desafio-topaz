@@ -1,7 +1,9 @@
 package br.com.topaz.encurtador.service;
 
+import javax.enterprise.context.ApplicationScoped;
 import java.security.SecureRandom;
 
+@ApplicationScoped
 public class GeradorCodigoCurto {
 
     private static final String CHARACTERS =

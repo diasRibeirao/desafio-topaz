@@ -9,6 +9,12 @@ public class CriarUrlCurtaResponse {
     public CriarUrlCurtaResponse() {
     }
 
+    public CriarUrlCurtaResponse(String urlCurta, String codigo, String urlOriginal) {
+        this.urlCurta = urlCurta;
+        this.codigo = codigo;
+        this.urlOriginal = urlOriginal;
+    }
+
     public String getUrlCurta() {
         return urlCurta;
     }
