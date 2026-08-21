@@ -843,7 +843,7 @@ Em um cenário de produção, alguns pontos poderiam evoluir:
 - adicionar métricas e monitoramento;
 - configurar HTTPS;
 - configurar domínio próprio;
-- automatizar build e testes através de integração contínua.
+- evoluir a integração contínua para uma etapa de entrega/deploy automatizado;
 
 Esses itens não foram incluídos no fluxo principal para manter a implementação focada no escopo solicitado.
 
