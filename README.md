@@ -23,6 +23,7 @@ O usuário informa uma URL original e, opcionalmente, um alias personalizado. A 
 - JavaScript
 - Docker
 - Docker Compose
+- GitHub Actions
 
 ## Estrutura do projeto
 
@@ -844,6 +845,21 @@ Em um cenário de produção, alguns pontos poderiam evoluir:
 - automatizar build e testes através de integração contínua.
 
 Esses itens não foram incluídos no fluxo principal para manter a implementação focada no escopo solicitado.
+
+# Integração contínua
+
+O projeto possui um workflow de integração contínua utilizando GitHub Actions.
+
+A cada Pull Request para a branch `master`, o pipeline executa automaticamente:
+
+1. configuração do ambiente Java 8;
+2. execução dos testes automatizados;
+3. build da aplicação;
+4. geração do arquivo WAR.
+
+O mesmo processo também é executado após alterações enviadas para a `master`.
+
+O objetivo é garantir que alterações no projeto não sejam integradas sem que o código consiga ser compilado e os testes automatizados sejam executados com sucesso.
 
 # Considerações finais
 
