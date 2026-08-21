@@ -31,6 +31,7 @@ O projeto foi separado em camadas para manter as responsabilidades bem definidas
 
 ```text
 src/main/java/br/com/topaz/encurtador
+├── config
 ├── domain
 ├── dto
 ├── exception
