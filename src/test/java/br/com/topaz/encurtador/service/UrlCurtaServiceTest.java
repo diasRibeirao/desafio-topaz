@@ -282,6 +282,71 @@ public class UrlCurtaServiceTest {
         assertFalse(resultado.isPresent());
     }
 
+    @Test
+    public void deveGerarNovoCodigoQuandoOcorrerColisao()
+            throws Exception {
+
+        repository.save(
+                new UrlCurta(
+                        "ABC1234",
+                        "https://existente.com"
+                )
+        );
+
+        GeradorCodigoCurtoControlado geradorControlado =
+                new GeradorCodigoCurtoControlado(
+                        "ABC1234",
+                        "XYZ9876"
+                );
+
+        injetarDependencia(
+                service,
+                "gerador",
+                geradorControlado
+        );
+
+        UrlCurta resultado =
+                service.criar(
+                        "https://www.google.com",
+                        null
+                );
+
+        assertEquals(
+                "XYZ9876",
+                resultado.getCodigo()
+        );
+    }
+
+    @Test
+    public void deveRemoverEspacosExternosDaUrl() {
+
+        UrlCurta resultado =
+                service.criar(
+                        "  https://www.google.com  ",
+                        "google"
+                );
+
+        assertEquals(
+                "https://www.google.com",
+                resultado.getUrlOriginal()
+        );
+    }
+
+    @Test
+    public void deveRemoverEspacosExternosDoAlias() {
+
+        UrlCurta resultado =
+                service.criar(
+                        "https://www.google.com",
+                        "  google  "
+                );
+
+        assertEquals(
+                "google",
+                resultado.getCodigo()
+        );
+    }
+
     private void injetarDependencia(
             Object target,
             String nomeCampo,
