@@ -1,0 +1,13 @@
+services:
+
+  wildfly:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: url-encurtador
+
+    ports:
+      - "8080:8080"
+
+    restart: unless-stopped
